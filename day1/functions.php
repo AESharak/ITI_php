@@ -12,11 +12,12 @@ function generateCaptchaCode() {
 /**
  * Validates the CAPTCHA input
  * @param string $userInput User's CAPTCHA input
- * @param string $verification The correct CAPTCHA code
  * @return bool Whether the CAPTCHA is valid
  */
-function validateCaptcha($userInput, $verification) {
-    return isset($userInput) && isset($verification) && $userInput === $verification;
+function validateCaptcha($userInput) {
+    return isset($userInput) && !empty($userInput) && 
+           isset($_SESSION['captcha_code']) && 
+           strtoupper($userInput) === $_SESSION['captcha_code'];
 }
 
 /**
@@ -73,7 +74,7 @@ function processForm($postData) {
     ];
     
     // Validate CAPTCHA
-    if (!validateCaptcha($postData['captcha'] ?? '', $postData['captcha_verification'] ?? '')) {
+    if (!validateCaptcha($postData['captcha'] ?? '')) {
         $result['captchaValid'] = false;
     }
     
@@ -107,8 +108,31 @@ function processForm($postData) {
  * @return bool Success status
  */
 function saveCustomerToFile($data) {
-    $file = 'customer.txt';
+    $file = __DIR__ . '/customers.txt';
+    
+    // Debug - Check if file exists and permissions
+    if (!file_exists($file)) {
+        error_log("Creating new customer file at: $file");
+    } else {
+        error_log("Customer file exists at: $file");
+        error_log("File is " . (is_writable($file) ? "writable" : "not writable"));
+    }
+    
+    // Check if file exists and is writable
+    if (file_exists($file) && !is_writable($file)) {
+        error_log("Customer file exists but is not writable: $file");
+        return false;
+    }
+    
+    // Check if directory is writable if file doesn't exist
+    if (!file_exists($file) && !is_writable(dirname($file))) {
+        error_log("Directory is not writable for creating customer file: " . dirname($file));
+        return false;
+    }
+    
+    // Get existing customers
     $allCustomers = getCustomersFromFile();
+    error_log("Current customer count: " . count($allCustomers));
     
     // Generate new ID
     $id = 1;
@@ -127,11 +151,30 @@ function saveCustomerToFile($data) {
         'gender' => $data['gender']
     ];
     
-    // Add to array and save to file
+    // Add to array
     $allCustomers[] = $newCustomer;
+    error_log("New customer added with ID: $id");
     
-    // Convert to JSON and save
-    return file_put_contents($file, json_encode($allCustomers));
+    // Convert to JSON with pretty print for readability
+    $jsonData = json_encode($allCustomers, JSON_PRETTY_PRINT);
+    if ($jsonData === false) {
+        error_log("Failed to encode customer data to JSON: " . json_last_error_msg());
+        return false;
+    }
+    
+    // Try to save to file with explicit error handling
+    try {
+        $result = file_put_contents($file, $jsonData);
+        if ($result === false) {
+            error_log("Failed to write customer data to file: $file");
+            return false;
+        }
+        error_log("Successfully wrote " . $result . " bytes to customer file");
+        return true;
+    } catch (Exception $e) {
+        error_log("Exception when writing to file: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
@@ -139,15 +182,29 @@ function saveCustomerToFile($data) {
  * @return array Array of customers
  */
 function getCustomersFromFile() {
-    $file = 'customer.txt';
+    $file = __DIR__ . '/customers.txt';
     
     // If file doesn't exist, create it with empty array
     if (!file_exists($file)) {
-        file_put_contents($file, json_encode([]));
+        $result = file_put_contents($file, json_encode([], JSON_PRETTY_PRINT));
+        if ($result === false) {
+            error_log("Failed to create new customers file: $file");
+            return [];
+        }
+    }
+    
+    // Check if file is readable
+    if (!is_readable($file)) {
+        error_log("Customers file is not readable: $file");
+        return [];
     }
     
     // Read file contents
     $contents = file_get_contents($file);
+    if ($contents === false) {
+        error_log("Failed to read customers file: $file");
+        return [];
+    }
     
     // If empty, return empty array
     if (empty($contents)) {
@@ -155,7 +212,13 @@ function getCustomersFromFile() {
     }
     
     // Decode and return
-    return json_decode($contents, true) ?: [];
+    $customers = json_decode($contents, true);
+    if ($customers === null && json_last_error() !== JSON_ERROR_NONE) {
+        error_log("Failed to decode customer data from JSON: " . json_last_error_msg());
+        return [];
+    }
+    
+    return $customers ?: [];
 }
 
 /**
@@ -164,7 +227,7 @@ function getCustomersFromFile() {
  * @return bool Success status
  */
 function deleteCustomer($id) {
-    $file = 'customer.txt';
+    $file = __DIR__ . '/customers.txt';
     $customers = getCustomersFromFile();
     
     // Find and remove the customer

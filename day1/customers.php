@@ -88,7 +88,7 @@ $deleteStatus = isset($_GET['deleted']) ? $_GET['deleted'] : null;
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     <?php echo htmlspecialchars($customer['gender']); ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a href="process.php?action=delete&id=<?php echo $customer['id']; ?>" 
                                        onclick="return confirm('Are you sure you want to delete this record?')"
                                        class="text-red-600 hover:text-red-900">Delete</a>

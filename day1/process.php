@@ -5,18 +5,34 @@ require_once 'functions.php';
 $formSubmitted = false;
 $formData = [];
 $captchaValid = true;
-$captchaCode = generateCaptchaCode();
 $validationErrors = [];
 $saveSuccess = false;
+$saveError = '';
+
+// Generate CAPTCHA code if not already in session
+if (!isset($_SESSION['captcha_code'])) {
+    $_SESSION['captcha_code'] = generateCaptchaCode();
+}
+$captchaCode = $_SESSION['captcha_code'];
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("Form submitted via POST");
     $result = processForm($_POST);
     $formSubmitted = $result['formSubmitted'];
     $captchaValid = $result['captchaValid'];
     $formData = $result['formData'];
     $validationErrors = $result['validationErrors'];
     $saveSuccess = $result['saveSuccess'];
+    
+    if ($formSubmitted && $captchaValid && empty($validationErrors) && !$saveSuccess) {
+        $saveError = "Failed to save customer data. Please check server logs.";
+        error_log("Form validation passed but save failed");
+    }
+    
+    // Generate new CAPTCHA code for next attempt
+    $_SESSION['captcha_code'] = generateCaptchaCode();
+    $captchaCode = $_SESSION['captcha_code'];
 }
 
 // Handle delete action

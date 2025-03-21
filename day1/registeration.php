@@ -17,7 +17,7 @@ require_once 'process.php';
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-6 space-y-6">
+    <div class="max-w-lg  w-full bg-white rounded-lg shadow-lg p-6 space-y-6">
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Registration Form</h1>
@@ -29,9 +29,9 @@ require_once 'process.php';
                     <?php endif; ?>
                 </p>
             </div>
-            <a href="customers.php" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <!-- <a href="customers.php" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 View Customers
-            </a>
+            </a> -->
         </div>
         
         <?php include 'templates/form_response.php'; ?>
