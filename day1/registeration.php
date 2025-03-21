@@ -1,5 +1,4 @@
 <?php
-// filepath: /var/www/html/php/day1/registeration.php
 require_once 'process.php';
 ?>
 
@@ -9,7 +8,6 @@ require_once 'process.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Form - Lab 01</title>
-    <!-- Include Tailwind CSS from CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .captcha-box {

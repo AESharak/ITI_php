@@ -1,6 +1,4 @@
-<?php
-// filepath: /var/www/html/php/day1/templates/form_parts/country_select.php
-?>
+
 <div>
     <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
     <select id="country" name="country" required

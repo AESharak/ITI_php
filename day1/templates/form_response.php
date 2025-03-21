@@ -1,5 +1,4 @@
 <?php
-// filepath: /var/www/html/php/day1/templates/form_response.php
 if ($formSubmitted && $captchaValid): ?>
     <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
         <div class="flex">

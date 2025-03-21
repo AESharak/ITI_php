@@ -1,6 +1,4 @@
-<?php
-// filepath: /var/www/html/php/day1/templates/form_parts/captcha.php
-?>
+
 <div>
     <label for="captcha" class="block text-sm font-medium text-gray-700">CAPTCHA</label>
     <div class="flex flex-col space-y-2">

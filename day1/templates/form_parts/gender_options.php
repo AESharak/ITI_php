@@ -1,6 +1,4 @@
-<?php
-// filepath: /var/www/html/php/day1/templates/form_parts/gender_options.php
-?>
+
 <div>
     <label class="block text-sm font-medium text-gray-700">Gender</label>
     <div class="mt-1 flex space-x-6">

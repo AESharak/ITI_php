@@ -1,5 +1,4 @@
 <?php
-// filepath: /var/www/html/php/day1/process.php
 require_once 'functions.php';
 
 // Initialize variables

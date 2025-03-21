@@ -1,5 +1,4 @@
 <?php
-// filepath: /var/www/html/php/day1/functions.php
 require_once 'config.php';
 
 /**

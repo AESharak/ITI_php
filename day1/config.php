@@ -1,5 +1,4 @@
 <?php
-// filepath: /var/www/html/php/day1/config.php
 // Configuration settings
 session_start();
 

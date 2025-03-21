@@ -1,6 +1,4 @@
-<?php
-// filepath: /var/www/html/php/day1/templates/form_fields.php
-?>
+
 <form action="./registeration.php" method="POST" class="space-y-4">
     <!-- First Name -->
     <div>

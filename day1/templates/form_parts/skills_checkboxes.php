@@ -1,6 +1,4 @@
-<?php
-// filepath: /var/www/html/php/day1/templates/form_parts/skills_checkboxes.php
-?>
+
 <div>
     <label class="block text-sm font-medium text-gray-700">Skills</label>
     <div class="mt-1 grid grid-cols-2 gap-2">
