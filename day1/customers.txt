@@ -1,1 +1,16 @@
-[{"id":3,"firstName":"mohamed","lastName":"abo treka","email":"trika@gmail.com","gender":"male"},{"id":4,"firstName":"monica","lastName":"bellucci","email":"monica@gmail.com","gender":"female"}]
+[
+    {
+        "id": 3,
+        "firstName": "mohamed",
+        "lastName": "abo treka",
+        "email": "trika@gmail.com",
+        "gender": "male"
+    },
+    {
+        "id": 4,
+        "firstName": "Jude",
+        "lastName": "Bellingham",
+        "email": "jude.belli@gmail.com",
+        "gender": "male"
+    }
+]
