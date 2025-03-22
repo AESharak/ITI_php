@@ -108,7 +108,7 @@ function processForm($postData) {
  * @return bool Success status
  */
 function saveCustomerToFile($data) {
-    $file = __DIR__ . '/customers.txt';
+    $file = __DIR__ . '/customers.json';
     
     // Debug - Check if file exists and permissions
     if (!file_exists($file)) {
@@ -182,7 +182,7 @@ function saveCustomerToFile($data) {
  * @return array Array of customers
  */
 function getCustomersFromFile() {
-    $file = __DIR__ . '/customers.txt';
+    $file = __DIR__ . '/customers.json';
     
     // If file doesn't exist, create it with empty array
     if (!file_exists($file)) {
@@ -227,7 +227,7 @@ function getCustomersFromFile() {
  * @return bool Success status
  */
 function deleteCustomer($id) {
-    $file = __DIR__ . '/customers.txt';
+    $file = __DIR__ . '/customers.json';
     $customers = getCustomersFromFile();
     
     // Find and remove the customer
