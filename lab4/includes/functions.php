@@ -48,15 +48,16 @@ function validateImage($file) {
         return "Please select an image file";
     }
     
-    // Check file size (max 2MB)
-    if ($file['size'] > 2 * 1024 * 1024) {
-        return "Image size should not exceed 2MB";
+    // Check file size (max 4MB)
+    if ($file['size'] > 4 * 1024 * 1024) {
+        return "Image size should not exceed 4MB";
     }
     
+
     // Check file type
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff'];
     if (!in_array($file['type'], $allowedTypes)) {
-        return "Only JPG, PNG, or GIF images are allowed";
+        return "Only JPG, PNG, GIF, WEBP, SVG, BMP, or TIFF images are allowed";
     }
     
     return true;
