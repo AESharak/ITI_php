@@ -84,7 +84,6 @@ function uploadImage($file) {
  * Initialize users table if it doesn't exist
  */
 function initializeUsersTable() {
-    $conn = dbConnect();
     $sql = "CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -94,6 +93,8 @@ function initializeUsersTable() {
         profile_image VARCHAR(255) NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )";
-    $conn->exec($sql);
+    
+    // Using executeQuery which was kept for backward compatibility
+    executeQuery($sql);
 }
 ?>
