@@ -1,5 +1,6 @@
 <?php
 require_once 'db.php';
+require_once 'functions.php';
 
 /**
  * Register a new user
@@ -7,81 +8,73 @@ require_once 'db.php';
 function registerUser($userData, $profileImage) {
     // Validate email using both methods
     if (!validateEmailFilter($userData['email']) || !validateEmailRegex($userData['email'])) {
-        return "Invalid email format";
+        return "Please enter a valid email address";
     }
     
     // Check if user already exists
     if (userExists($userData['email'])) {
-        return "Email already registered";
+        return "This email is already registered";
     }
     
     // Validate password
     if (!validatePassword($userData['password'])) {
-        return "Password must be exactly 8 characters, contain no capitals, and only allow underscores as special characters";
+        return "Password must be exactly 8 characters, no capital letters, only underscore as special character";
     }
     
-    // Confirm passwords match
-    if ($userData['password'] !== $userData['confirm_password']) {
-        return "Passwords do not match";
-    }
-    
-    // Upload profile image
+    // Validate image
     $imageResult = validateImage($profileImage);
     if ($imageResult !== true) {
         return $imageResult;
     }
     
+    // Upload image
     $fileName = uploadImage($profileImage);
     if (!$fileName) {
         return "Failed to upload profile image";
     }
     
-    // Create user record
-    $user = [
-        'name' => $userData['name'],
-        'email' => $userData['email'],
-        'password' => password_hash($userData['password'], PASSWORD_DEFAULT),
-        'room' => $userData['room'],
-        'profile_image' => $fileName,
-        'created_at' => date('Y-m-d H:i:s')
-    ];
-    
-    // Save user to database
-    $db = dbConnect();
-    $stmt = $db->prepare("INSERT INTO users (name, email, password, room, profile_image, created_at) VALUES (?, ?, ?, ?, ?, ?)");
-    if ($stmt->execute([$user['name'], $user['email'], $user['password'], $user['room'], $user['profile_image'], $user['created_at']])) {
+    // Insert user into database
+    try {
+        insertUser(
+            $userData['name'],
+            $userData['email'],
+            $userData['password'],
+            $userData['room'],
+            $fileName
+        );
         return true;
-    } else {
-        return "Failed to save user data: " . $stmt->errorInfo()[2];
+    } catch (Exception $e) {
+        error_log("Error registering user: " . $e->getMessage());
+        return "Registration failed. Please try again later.";
     }
 }
 
 /**
- * Authenticate user
+ * Login user
  */
 function loginUser($email, $password) {
-    $db = dbConnect();
-    $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Get user by email
+    $user = getUserByEmail($email);
     
-    if ($user) {
-        if (password_verify($password, $user['password'])) {
-            // Set session
-            $_SESSION['user'] = [
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'room' => $user['room'],
-                'profile_image' => $user['profile_image'],
-                'created_at' => $user['created_at']
-            ];
-            return true;
-        } else {
-            return "Invalid credentials";
-        }
+    if (!$user) {
+        return "Invalid email or password";
     }
     
-    return "Invalid credentials";
+    // Verify password
+    if (!password_verify($password, $user['password'])) {
+        return "Invalid email or password";
+    }
+    
+    // Set session data
+    $_SESSION['user'] = [
+        'id' => $user['id'],
+        'name' => $user['name'],
+        'email' => $user['email'],
+        'room' => $user['room'],
+        'profile_image' => $user['profile_image']  // Add this line
+    ];
+    
+    return true;
 }
 
 /**
@@ -93,5 +86,21 @@ function logoutUser() {
     }
     
     session_destroy();
+}
+
+/**
+ * Check if user is authenticated
+ */
+function isAuthenticated() {
+    return isset($_SESSION['user']);
+}
+
+/**
+ * Require authentication to access a page
+ */
+function requireAuth() {
+    if (!isAuthenticated()) {
+        redirectWithError('login.php', 'Please login to access this page');
+    }
 }
 ?>

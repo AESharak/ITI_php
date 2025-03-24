@@ -40,39 +40,43 @@ function validatePassword($password) {
 }
 
 /**
- * Get users from the database
+ * Validate uploaded image
  */
-function getUsers() {
-    $conn = dbConnect();
-    $stmt = $conn->prepare("SELECT * FROM users");
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+function validateImage($file) {
+    // Check if a file was uploaded
+    if ($file['size'] == 0) {
+        return "Please select an image file";
+    }
+    
+    // Check file size (max 2MB)
+    if ($file['size'] > 2 * 1024 * 1024) {
+        return "Image size should not exceed 2MB";
+    }
+    
+    // Check file type
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($file['type'], $allowedTypes)) {
+        return "Only JPG, PNG, or GIF images are allowed";
+    }
+    
+    return true;
 }
 
 /**
- * Save user to the database
+ * Upload image and return the filename
  */
-function saveUser($user) {
-    $conn = dbConnect();
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password, room, profile_image, created_at) VALUES (?, ?, ?, ?, ?, ?)");
-    return $stmt->execute([
-        $user['name'],
-        $user['email'],
-        password_hash($user['password'], PASSWORD_DEFAULT),
-        $user['room'],
-        $user['profile_image'],
-        date('Y-m-d H:i:s')
-    ]);
-}
-
-/**
- * Check if user exists
- */
-function userExists($email) {
-    $conn = dbConnect();
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    return $stmt->fetchColumn() > 0;
+function uploadImage($file) {
+    // Create a unique filename
+    $fileName = time() . '_' . $file['name'];
+    $targetPath = UPLOADS_DIR . $fileName;
+    
+    // Move uploaded file
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        error_log("Failed to move uploaded file from {$file['tmp_name']} to {$targetPath}");
+        return false;
+    }
+    
+    return $fileName;
 }
 
 /**

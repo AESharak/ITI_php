@@ -1,12 +1,17 @@
 <?php
-// Configuration settings
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Start session
 session_start();
 
 // Database connection settings
 define('DB_HOST', 'localhost');
-define('DB_USER', 'aesharak'); // 
-define('DB_PASS', 'aeey'); // Replace with your database password
-define('DB_NAME', 'php_lab4'); // Replace with your database name
+define('DB_USER', 'aesharak'); // Make sure this is correct
+define('DB_PASS', 'aeey'); // Make sure this is correct
+define('DB_NAME', 'php_lab4');
 
 // Application paths
 define('SITE_ROOT', realpath(dirname(__FILE__) . '/..'));

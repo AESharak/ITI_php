@@ -2,6 +2,7 @@
 require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
+require_once 'includes/auth.php';
 
 // Protect this page
 requireAuth();
@@ -44,7 +45,7 @@ $activityStats = [
         <div class="flex flex-col lg:flex-row items-center lg:items-start space-y-4 lg:space-y-0 lg:space-x-8">
             <!-- Profile image with enhanced styling -->
             <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-indigo-100 shadow-lg">
-                <img src="uploads/<?php echo htmlspecialchars($_SESSION['user']['profile_image']); ?>" alt="Profile" class="w-full h-full object-cover">
+                <img src="uploads/<?php echo htmlspecialchars($_SESSION['user']['profile_image'] ?? ''); ?>" alt="Profile" class="w-full h-full object-cover">
             </div>
             
             <!-- User details with icons -->
@@ -81,7 +82,7 @@ $activityStats = [
                         <dd class="mt-1 text-sm text-gray-900"><?php echo htmlspecialchars($_SESSION['user']['room']); ?></dd>
                     </div>
                     
-                    <!-- <div class="sm:col-span-1">
+                    <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -89,7 +90,7 @@ $activityStats = [
                             Member Since
                         </dt>
                         <dd class="mt-1 text-sm text-gray-900"><?php echo $createdDate; ?></dd>
-                    </div> -->
+                    </div>
                     
                     <?php if (isset($_SESSION['user']['ext'])): ?>
                     <div class="sm:col-span-1">
