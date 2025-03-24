@@ -1,5 +1,5 @@
 <?php
-require_once 'functions.php';
+require_once 'db.php';
 
 /**
  * Register a new user
@@ -46,14 +46,13 @@ function registerUser($userData, $profileImage) {
         'created_at' => date('Y-m-d H:i:s')
     ];
     
-    // Save user
-    $users = getUsers();
-    $users[] = $user;
-    
-    if (saveUsers($users)) {
+    // Save user to database
+    $db = dbConnect();
+    $stmt = $db->prepare("INSERT INTO users (name, email, password, room, profile_image, created_at) VALUES (?, ?, ?, ?, ?, ?)");
+    if ($stmt->execute([$user['name'], $user['email'], $user['password'], $user['room'], $user['profile_image'], $user['created_at']])) {
         return true;
     } else {
-        return "Failed to save user data";
+        return "Failed to save user data: " . $stmt->errorInfo()[2];
     }
 }
 
@@ -61,23 +60,24 @@ function registerUser($userData, $profileImage) {
  * Authenticate user
  */
 function loginUser($email, $password) {
-    $users = getUsers();
+    $db = dbConnect();
+    $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    foreach ($users as $user) {
-        if ($user['email'] === $email) {
-            if (password_verify($password, $user['password'])) {
-                // Set session
-                $_SESSION['user'] = [
-                    'name' => $user['name'],
-                    'email' => $user['email'],
-                    'room' => $user['room'],
-                    'profile_image' => $user['profile_image']
-                ];
-                
-                return true;
-            } else {
-                return "Invalid credentials";
-            }
+    if ($user) {
+        if (password_verify($password, $user['password'])) {
+            // Set session
+            $_SESSION['user'] = [
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'room' => $user['room'],
+                'profile_image' => $user['profile_image'],
+                'created_at' => $user['created_at']
+            ];
+            return true;
+        } else {
+            return "Invalid credentials";
         }
     }
     
@@ -94,3 +94,4 @@ function logoutUser() {
     
     session_destroy();
 }
+?>
