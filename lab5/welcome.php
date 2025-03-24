@@ -4,21 +4,17 @@ require_once 'includes/db.php';
 require_once 'includes/functions.php';
 require_once 'includes/auth.php';
 
-// Protect this page
 requireAuth();
 
 include 'includes/header.php';
 
-// Get user information from the database
 $userEmail = $_SESSION['user']['email'];
 $user = getUserByEmail($userEmail);
 
-// Get creation date in a readable format
 $createdDate = isset($user['created_at']) ? 
     date('F j, Y', strtotime($user['created_at'])) : 
     'Unknown';
 
-// Mock data for enhanced display
 $lastLogin = date('F j, Y, g:i a', strtotime('-2 days'));
 $activityStats = [
     'logins' => rand(3, 15),

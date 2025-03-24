@@ -4,10 +4,8 @@ require_once 'includes/db.php';
 require_once 'includes/functions.php';
 require_once 'includes/auth.php';
 
-// Protect this page
 requireAuth();
 
-// Check if an ID was provided
 if(!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     redirectWithError('usersListing.php', 'Invalid user ID');
 }
@@ -15,14 +13,11 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $userId = $_GET['id'];
 $user = getUserById($userId);
 
-// Check if user exists
 if(!$user) {
     redirectWithError('usersListing.php', 'User not found');
 }
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Prepare user data
     $userData = [
         'id' => $userId,
         'name' => $_POST['name'] ?? '',
@@ -30,19 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'room' => $_POST['room'] ?? ''
     ];
     
-    // Validate required fields
     if(empty($userData['name']) || empty($userData['email']) || empty($userData['room'])) {
         redirectWithError("editUser.php?id=$userId", 'All fields are required');
     }
     
-    // Check if email belongs to another user
     if($userData['email'] !== $user['email'] && userExistsByEmail($userData['email'])) {
         redirectWithError("editUser.php?id=$userId", 'Email address is already in use');
     }
     
-    // Process password change if provided
     if(!empty($_POST['password'])) {
-        // Validate password
         if(!validatePassword($_POST['password'])) {
             redirectWithError("editUser.php?id=$userId", 'Password must be exactly 8 characters, no capital letters, only underscore allowed as special character');
         }
@@ -54,15 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userData['password'] = $_POST['password'];
     }
     
-    // Process image upload if provided
     if(isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
-        // Validate image
         $imageResult = validateImage($_FILES['profile_image']);
         if($imageResult !== true) {
             redirectWithError("editUser.php?id=$userId", $imageResult);
         }
         
-        // Upload image
         $fileName = uploadImage($_FILES['profile_image']);
         if(!$fileName) {
             redirectWithError("editUser.php?id=$userId", 'Failed to upload profile image');
@@ -71,11 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userData['profile_image'] = $fileName;
     }
     
-    // Update user
     $result = updateUser($userData);
     
     if($result === true) {
-        // If current user is being updated, update session data
         if($_SESSION['user']['id'] == $userId) {
             $_SESSION['user']['name'] = $userData['name'];
             $_SESSION['user']['email'] = $userData['email'];

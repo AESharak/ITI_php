@@ -2,13 +2,11 @@
 require_once 'includes/config.php';
 require_once 'includes/auth.php';
 
-// Check if user is already logged in
 if (isAuthenticated()) {
     header("Location: welcome.php");
     exit;
 }
 
-// Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -27,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Display login form
 include 'includes/header.php';
 ?>
 

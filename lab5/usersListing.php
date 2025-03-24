@@ -4,10 +4,8 @@ require_once 'includes/db.php';
 require_once 'includes/functions.php';
 require_once 'includes/auth.php';
 
-// Protect this page - only authenticated users can access
 requireAuth();
 
-// Get all users from the database
 $users = getUsers();
 
 include 'includes/header.php';

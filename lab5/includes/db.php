@@ -2,7 +2,8 @@
 require_once 'DBClass.php';
 require_once 'config.php';
 
-// Database instance
+
+
 function getDbInstance() {
     static $db = null;
     if ($db === null) {
@@ -12,9 +13,7 @@ function getDbInstance() {
     return $db;
 }
 
-// Function to execute a query (maintaining for backward compatibility)
 function executeQuery($query, $params = []) {
-    // This function can remain for any direct queries not covered by Database class
     $conn = dbConnect();
     $stmt = $conn->prepare($query);
     
@@ -27,7 +26,6 @@ function executeQuery($query, $params = []) {
     return $stmt;
 }
 
-// Legacy PDO connection (maintain for executeQuery and any other direct PDO usage)
 function dbConnect() {
     try {
         $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME;
@@ -40,7 +38,6 @@ function dbConnect() {
     }
 }
 
-// Function to insert a new user
 function insertUser($name, $email, $password, $room, $profile_image) {
     $db = getDbInstance();
     $data = [
@@ -54,34 +51,29 @@ function insertUser($name, $email, $password, $room, $profile_image) {
     return $db->insert('users', $data);
 }
 
-// Function to get all users
 function getUsers() {
     $db = getDbInstance();
     return $db->select('users');
 }
 
-// Function to check if a user exists
 function userExists($email) {
     $db = getDbInstance();
     $result = $db->select('users', 'COUNT(*) as count', "email = ?", [$email]);
     return $result[0]['count'] > 0;
 }
 
-// Get user by email
 function getUserByEmail($email) {
     $db = getDbInstance();
     $result = $db->select('users', '*', "email = ?", [$email]);
     return $result ? $result[0] : false;
 }
 
-// Function to get user by ID
 function getUserById($id) {
     $db = getDbInstance();
     $result = $db->select('users', '*', "id = ?", [$id]);
     return $result ? $result[0] : false;
 }
 
-// Function to check if a user exists by email (ignoring specific ID)
 function userExistsByEmail($email, $ignoreId = null) {
     $db = getDbInstance();
     if ($ignoreId !== null) {
@@ -92,7 +84,6 @@ function userExistsByEmail($email, $ignoreId = null) {
     return $result[0]['count'] > 0;
 }
 
-// Function to update user information
 function updateUser($userData) {
     $db = getDbInstance();
     
@@ -103,12 +94,10 @@ function updateUser($userData) {
             'room' => $userData['room']
         ];
         
-        // Add password if provided
         if(isset($userData['password'])) {
             $updateData['password'] = password_hash($userData['password'], PASSWORD_DEFAULT);
         }
         
-        // Add profile image if provided
         if(isset($userData['profile_image'])) {
             $updateData['profile_image'] = $userData['profile_image'];
         }
@@ -120,18 +109,14 @@ function updateUser($userData) {
     }
 }
 
-// Function to delete a user
 function deleteUser($id) {
     try {
-        // Get user profile image first
         $db = getDbInstance();
         $result = $db->select('users', 'profile_image', "id = ?", [$id]);
         $profile_image = $result[0]['profile_image'] ?? null;
         
-        // Delete the user
         $success = $db->delete('users', $id);
         
-        // Delete profile image file if it exists
         if ($success && $profile_image) {
             $imagePath = UPLOADS_DIR . $profile_image;
             if(file_exists($imagePath)) {
@@ -146,7 +131,6 @@ function deleteUser($id) {
     }
 }
 
-// Helper functions
 function redirectWithError($url, $errorMessage) {
     $_SESSION['error'] = $errorMessage;
     header("Location: $url");
