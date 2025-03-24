@@ -35,9 +35,14 @@ $activityStats = [
             <h1 class="text-xl font-semibold text-gray-900">Welcome, <?php echo htmlspecialchars($_SESSION['user']['name']); ?>!</h1>
             <p class="mt-1 text-sm text-gray-500">You have successfully logged in</p>
         </div>
-        <a href="logout.php" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200">
-            Logout
-        </a>
+        <div class="space-x-2">
+            <a href="usersListing.php" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200">
+                Manage Users
+            </a>
+            <a href="logout.php" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200">
+                Logout
+            </a>
+        </div>
     </div>
     
     <div class="p-6">
