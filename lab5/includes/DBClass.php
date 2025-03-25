@@ -67,6 +67,7 @@ class Database {
         }
     }
     
+    // this for testing
     public function update($table, $id, $data) {
         $setParts = [];
         foreach ($data as $column => $value) {
